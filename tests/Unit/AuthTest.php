@@ -4,85 +4,87 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-
 class AuthTest extends TestCase
 {
-    use RefreshDatabase; // Réinitialise la base après chaque test
+    use RefreshDatabase; // Reset database after each test
 
-    /** @test */
+    
     public function test_register()
     {
         $response = $this->postJson('/api/register', [
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
-            'password' => 'password',
-            'password_confirmation' => 'password',
+            'name' => 'Jcherkaoui',
+            'email' => 'ch@example.com',
+            'password' => '12301230',
+            'password_confirmation' => '12301230',
         ]);
 
         $response->assertStatus(201)
                  ->assertJson(['message' => 'User registered successfully']);
 
         $this->assertDatabaseHas('users', [
-            'email' => 'john@example.com',
+            'email' => 'ch@example.com',
         ]);
     }
 
-    /** @test */
+
     public function test_login()
     {
         $user = User::create([
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
-            'password' => Hash::make('password'),
+            'name' => 'Jcherkaoui',
+            'email' => 'ch@example.com',
+            'password' => Hash::make('12301230'),
         ]);
 
         $response = $this->postJson('/api/login', [
-            'email' => 'john@example.com',
-            'password' => 'password',
+            'email' => 'ch@example.com',
+            'password' => '12301230',
         ]);
 
         $response->assertStatus(200)
-                 ->assertJsonStructure(['token']);
+                 ->assertJsonStructure(['access_token']);
     }
-    /** @test */
+
+    
     public function test_logout()
     {
         $user = User::create([
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
-            'password' => Hash::make('password'),
+            'name' => 'Jcherkaoui',
+            'email' => 'ch@example.com',
+            'password' => Hash::make('12301230'),
         ]);
 
-        $token = $user->createToken('API Token')->plainTextToken;
+        // Generate a JWT token
+        $token = JWTAuth::fromUser($user);
 
         $response = $this->postJson('/api/logout', [], [
             'Authorization' => "Bearer $token"
         ]);
 
         $response->assertStatus(200)
-         ->assertJson(['message' => 'Logged out successfully']);
+                 ->assertJson(['message' => 'User logged out successfully']);
     }
-    /** @test */
+
+    
     public function test_user()
-{
-    $user = User::create([
-        'name' => 'John Doe',
-        'email' => 'john@example.com',
-        'password' => Hash::make('password'),
-    ]);
+    {
+        $user = User::create([
+            'name' => 'Jcherkaoui',
+            'email' => 'ch@example.com',
+            'password' => Hash::make('12301230'),
+        ]);
 
-    $token = $user->createToken('API Token')->plainTextToken;
+        // Generate JWT token
+        $token = JWTAuth::fromUser($user);
 
-    $response = $this->getJson('/api/user', [
-        'Authorization' => "Bearer $token"
-    ]);
+        $response = $this->getJson('/api/user', [
+            'Authorization' => "Bearer $token"
+        ]);
 
-    $response->assertStatus(200)
-             ->assertJson(['email' => 'john@example.com']);
-}
-
+        $response->assertStatus(200)
+                 ->assertJson(['email' => 'ch@example.com']);
+    }
 }
