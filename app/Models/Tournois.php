@@ -14,7 +14,8 @@ class Tournois extends Model
         'name',
         'description',
         'start_date',
-        'end_date'
+        'end_date',
+        'user_id',
        ];
     public function user(){
         return $this->BelongsTo(User::class);

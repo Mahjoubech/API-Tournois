@@ -24,4 +24,4 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api');
 Route::get('/user', [AuthController::class, 'user'])->middleware('auth:api');
 Route::post('/refresh', [AuthController::class, 'refresh']);
-Route::apiResource('tournois',TournoisController::class);
+Route::apiResource('tournois', TournoisController::class);

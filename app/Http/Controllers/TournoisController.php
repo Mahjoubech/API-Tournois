@@ -12,6 +12,10 @@ class TournoisController extends Controller
     /**
      * Display a listing of the resource.
      */
+    public function __construct()
+    {
+        $this->middleware('auth:api')->except(['index', 'show']);
+    }
     public function index()
     {
         return response()->json(    Tournois::all());
@@ -51,20 +55,13 @@ class TournoisController extends Controller
         return response()->json($tournois);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Tournois $tournois)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Tournois $tournois)
+    public function update(Request $request,$id)
     {
-
+$tournois = Tournois::find($id);
             Gate::authorize('modify', $tournois);
             if (!$tournois) {
                 return response()->json(['message' => 'Tournoi non trouvé'], 404);
@@ -83,8 +80,10 @@ class TournoisController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Tournois $tournois)
+    public function destroy($id)
     {
+        $tournois = Tournois::find($id);
+
         Gate::authorize('modify', $tournois);
         $tournois->delete();
         return ['message' => 'The Country was deleted'];

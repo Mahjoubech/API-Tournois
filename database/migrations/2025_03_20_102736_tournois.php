@@ -13,7 +13,7 @@ return new class extends Migration
 {
     Schema::create('tournois', function (Blueprint $table) {
         $table->id();
-        $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Clé étrangère
+        $table->foreignId('user_id')->constrained()->onDelete('cascade'); 
         $table->string('name');
         $table->text('description')->nullable();
         $table->date('start_date');
