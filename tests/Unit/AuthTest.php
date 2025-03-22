@@ -12,7 +12,7 @@ class AuthTest extends TestCase
 {
     use RefreshDatabase; // Reset database after each test
 
-    
+
     public function test_register()
     {
         $response = $this->postJson('/api/register', [
@@ -48,7 +48,7 @@ class AuthTest extends TestCase
                  ->assertJsonStructure(['access_token']);
     }
 
-    
+
     public function test_logout()
     {
         $user = User::create([
@@ -68,7 +68,7 @@ class AuthTest extends TestCase
                  ->assertJson(['message' => 'User logged out successfully']);
     }
 
-    
+
     public function test_user()
     {
         $user = User::create([
