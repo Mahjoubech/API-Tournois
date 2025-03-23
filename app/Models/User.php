@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Tournois;
+use App\Models\Players;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
@@ -47,6 +48,9 @@ class User extends Authenticatable implements JWTSubject
     ];
     public function tournois(){
         return $this->hasMany(Tournois::class);
+    }
+    public function players(){
+        return $this->hasMany(Players::class);
     }
     public function getJWTIdentifier()
     {
