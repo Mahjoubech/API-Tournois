@@ -4,6 +4,7 @@ use App\Http\Controllers\TournoisController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PlayersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,3 +26,4 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api'
 Route::get('/user', [AuthController::class, 'user'])->middleware('auth:api');
 Route::post('/refresh', [AuthController::class, 'refresh']);
 Route::apiResource('tournois', TournoisController::class);
+Route::apiResource('players', PlayersController::class);
