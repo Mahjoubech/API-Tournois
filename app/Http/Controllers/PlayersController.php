@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Players;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 class PlayersController extends Controller
 {
     /**
@@ -51,24 +52,32 @@ class PlayersController extends Controller
      */
     public function show(Players $player)
     {
-        //
-    }
+        if (!$player) {
+            return response()->json(['message' => 'Tournoi non trouvé'], 404);
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Players $player)
-    {
-        //
+        return response()->json($player);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $playerequest, Players $player)
+    public function update(Request $request, $id)
     {
-        //
+        $player = Players::find($id);
+        if (!$player) {
+            return response()->json(['message' => 'Player not found'], 404);
+        }
+        Gate::authorize('modify', $player);
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'number' => 'required|integer',
+        ]);
+        $player->update($data);
+
+        return response()->json($player);
     }
+    
 
     /**
      * Remove the specified resource from storage.
