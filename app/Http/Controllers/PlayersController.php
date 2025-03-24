@@ -82,8 +82,14 @@ class PlayersController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Players $player)
+    public function destroy($id)
     {
-        //
+        $player =Players::find($id);
+        if (!$player) {
+            return response()->json(['message' => 'Player not found'], 404);
+        }
+        Gate::authorize(('modify'), $player);
+        $player->delete();
+        return response()->json(['message' => 'The Player was deleted']);
     }
 }

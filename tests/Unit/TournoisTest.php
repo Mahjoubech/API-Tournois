@@ -92,7 +92,7 @@ public function it_can_delete_a_tournament()
     $response = $this->deleteJson("/api/tournois/{$tournois->id}");
 
     $response->assertStatus(200)
-             ->assertJson(['message' => 'The Country was deleted']);
+             ->assertJson(['message' => 'The Tournois was deleted']);
 
     $this->assertDatabaseMissing('tournois', [
         'id' => $tournois->id,
