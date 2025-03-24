@@ -97,5 +97,20 @@ class PlayerTest extends TestCase
             'tournois_id' => $tournois->id,
         ]);
     }
+    public function test_delete_methode_destory_player(){
+        $user = User::factory()->create();
+        $this->actingAs($user, 'api');
+        $tournois = Tournois::factory()->create();
+        $player = Players::factory()->create([
+            'user_id'=> $user->id,
+            'tournois_id' => $tournois->id,
+        ]);
+        $response = $this->deleteJson(route('players.destroy', $player->id));
+        $response->assertStatus(200) ->assertJson(['message' => 'The Player was deleted']);
+        $this->assertDatabaseMissing('players',[
+            'id' => $player->id,
+        ]);
+
+    }
     
 }
