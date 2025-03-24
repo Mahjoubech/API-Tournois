@@ -68,4 +68,34 @@ class PlayerTest extends TestCase
             'user_id' => $user->id
         ]);
     }
+    public function test_Edit_method_Update_a_player()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user, 'api');
+        $tournois = Tournois::factory()->create();
+        $player = Players::factory()->create([
+            'user_id' => $user->id,
+            'tournois_id' => $tournois->id,
+        ]);
+        $data = [
+            'name' => 'Test hhh Player',
+            'number' => 12,
+        ];
+        $response = $this->putJson(route('players.update', $player->id), $data);
+        $response->assertStatus(200)
+                 ->assertJson([
+                     'name' => 'Test hhh Player',
+                     'number' => 12,
+                     'user_id' => $user->id,
+                     'tournois_id' => $tournois->id,
+                 ]);
+        $this->assertDatabaseHas('players', [
+            'id' => $player->id,
+            'name' => 'Test hhh Player',
+            'number' => 12,
+            'user_id' => $user->id,
+            'tournois_id' => $tournois->id,
+        ]);
+    }
+    
 }
