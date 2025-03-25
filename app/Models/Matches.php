@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Matches extends Model
 {
     use HasFactory;
-    public $fillable = ['match_date','tournois_id'];
+    public $fillable = ['date_match','tournois_id','user_id'];
     public function user()
     {
         return $this->belongsTo(User::class);
