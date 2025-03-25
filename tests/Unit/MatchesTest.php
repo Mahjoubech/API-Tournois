@@ -31,4 +31,21 @@ class MatchesTest extends TestCase
             ]);
         }
     }
+    public function test_store_method_creates_a_new_match(){
+        $user = User::factory()->create();
+        $tournois = Tournois::factory()->create();
+        $this->actingAs($user, 'api');
+        $data = [
+            'date_match' => '2025-01-01',
+            'tournois_id' => $tournois->id
+        ];
+        $response = $this->postJson('/api/matches', $data);
+        $response->assertStatus(201);
+        $this->assertDatabaseHas('matches', [
+            'date_match' => '2025-01-01',
+            'tournois_id' => $tournois->id,
+            'user_id' => $user->id
+        ]);   
+    }
+
 }
