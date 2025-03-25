@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Players;
+use App\Models\Matches;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -32,7 +33,7 @@ class PlayersController extends Controller
             'number' => 'required|integer',
             'tournois_id' => 'required|exists:tournois,id',
         ]);
-        $user = Auth::user(); // Ensure user is authenticated
+        $user = Auth::user(); 
 
     if (!$user) {
         return response()->json(['message' => 'Utilisateur non authentifié'], 401);
@@ -74,7 +75,6 @@ class PlayersController extends Controller
             'number' => 'required|integer',
         ]);
         $player->update($data);
-
         return response()->json($player);
     }
     
@@ -92,4 +92,53 @@ class PlayersController extends Controller
         $player->delete();
         return response()->json(['message' => 'The Player was deleted']);
     }
+
+    public function assignToMatch(Request $request, $player_id)
+{
+    $player = Players::find($player_id);
+    if (!$player) {
+        return response()->json(['message' => 'Player not found'], 404);
+    }
+
+    $request->validate([
+        'match_id' => 'required|exists:matches,id'
+    ]);
+
+    $match = Matches::find($request->match_id);
+    if (!$match) {
+        return response()->json(['message' => 'Match not found'], 404);
+    }
+
+    if (!$player->matches()->where('match_player.match_id', $request->match_id)->exists()) {
+        $player->matches()->attach($request->match_id);
+        return response()->json(['message' => 'Player assigned to match successfully']);
+    }
+    
+
+    return response()->json(['message' => 'Player already assigned to this match'], 400);
+}
+public function removeFromMatch($player_id, $match_id)
+{
+    $player = Players::find($player_id);
+    $match = Matches::find($match_id);
+
+    if (!$player || !$match) {
+        return response()->json(['message' => 'Player or Match not found'], 404);
+    }
+
+    // Detach the player from the match
+    $player->matches()->detach($match_id);
+
+    return response()->json(['message' => 'Player removed from match successfully']);
+}
+public function getPlayerMatches($player_id)
+{
+    $player = Players::find($player_id);
+    if (!$player) {
+        return response()->json(['message' => 'Player not found'], 404);
+    }
+
+    return response()->json($player->matches);
+}
+
 }
