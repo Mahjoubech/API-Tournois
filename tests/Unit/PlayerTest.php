@@ -3,6 +3,7 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use App\Models\Players;
+use App\Models\Matches;
 use App\Models\User;
 use App\Models\Tournois;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -112,5 +113,76 @@ class PlayerTest extends TestCase
         ]);
 
     }
-    
+    public function test_get_player_returns_specific_player()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user, 'api');
+        $tournois = Tournois::factory()->create();
+        $player = Players::factory()->create([
+            'user_id' => $user->id,
+            'tournois_id' => $tournois->id,
+        ]);
+
+        $response = $this->getJson(route('players.show', $player->id));
+        $response->assertStatus(200)
+                 ->assertJson([
+                     'id' => $player->id,
+                     'name' => $player->name,
+                     'number' => $player->number,
+                     'tournois_id' => $player->tournois_id,
+                     'user_id' => $player->user_id
+                 ]);
+    }
+    public function test_assign_player_to_match()
+{
+    $user = User::factory()->create();
+    $this->actingAs($user, 'api');
+    $tournois = Tournois::factory()->create();
+    $player = Players::factory()->create([
+        'user_id' => $user->id,
+        'tournois_id' => $tournois->id,
+    ]);
+    $match = Matches::factory()->create([
+        'tournois_id' => $tournois->id,
+    ]);
+    $data = ['match_id' => $match->id];
+    $response = $this->postJson("/api/players/{$player->id}/assign-match", $data);
+
+    $response->assertStatus(200)
+             ->assertJson(['message' => 'Player assigned to match successfully']);
+    $this->assertDatabaseHas('match_player', [
+        'player_id' => $player->id,
+        'match_id' => $match->id,
+    ]);
+    $response = $this->postJson("/api/players/{$player->id}/assign-match", $data);
+    $response->assertStatus(400)
+             ->assertJson(['message' => 'Player already assigned to this match']);
+}
+public function test_remove_player_from_match()
+{
+    $user = User::factory()->create();
+    $this->actingAs($user, 'api'); 
+    $tournois = Tournois::factory()->create();
+    $player = Players::factory()->create([
+        'user_id' => $user->id,
+        'tournois_id' => $tournois->id,
+    ]);
+    $match = Matches::factory()->create([
+        'tournois_id' => $tournois->id,
+    ]);
+    $player->matches()->attach($match->id);  
+    $this->assertDatabaseHas('match_player', [
+        'player_id' => $player->id,
+        'match_id' => $match->id,
+    ]);
+    $response = $this->postJson("/api/players/{$player->id}/remove-from-match/{$match->id}");
+   $response->assertStatus(200)
+             ->assertJson(['message' => 'Player removed from match successfully']);
+    $this->assertDatabaseMissing('match_player', [
+        'player_id' => $player->id,
+        'match_id' => $match->id,
+    ]);
+}
+
+
 }
