@@ -18,4 +18,9 @@ protected $fillable = ['name', 'number','user_id','tournois_id'];
     {
         return $this->belongsTo(User::class);
     }
+    public function matches()
+    {
+        return $this->belongsToMany(Matches::class, 'match_player', 'player_id', 'match_id');
+    }
+    
 }
