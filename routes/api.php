@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PlayersController;
 use App\Http\Controllers\MatchesController;
+use App\Models\Matches;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,4 +32,5 @@ Route::apiResource('players', PlayersController::class);
 Route::apiResource('matches', MatchesController::class);
 Route::post('/players/{id}/assign-match', [PlayersController::class, 'assignToMatch']);
 Route::post('/players/{player_id}/remove-from-match/{match_id}', [PlayersController::class, 'removeFromMatch']);
+Route::get('/matches/{id}/players', [MatchesController::class, 'getMatchPlayers']);
 
