@@ -87,5 +87,17 @@ class MatchesTest extends TestCase
             'id' => $match->id
         ]);
     }
-
+    public function test_get_match_players_returns_players()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user, 'api');
+        $match = Matches::factory()->create();
+        $players = Players::factory()->count(3)->create();
+        $match->players()->attach($players->pluck('id'));
+        $response = $this->getJson('/api/matches/'.$match->id.'/players');
+        $response->assertStatus(200);
+        $response->assertJsonCount(3);
+        $response->assertJson($players->toArray());
+    }
+    
 }
