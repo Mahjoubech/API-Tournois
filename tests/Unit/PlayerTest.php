@@ -14,29 +14,16 @@ class PlayerTest extends TestCase
     
     public function test_index_returns_all_players()
     {
-        // Create a user and authenticate
         $user = User::factory()->create();
         $this->actingAs($user, 'api');
-    
-        // Create a tournament
         $tournois = Tournois::factory()->create();
-    
-        // Create 3 players
         $players = Players::factory()->count(3)->create([
             'user_id' => $user->id,
             'tournois_id' => $tournois->id
         ]);
-    
-        // Send GET request to /api/players
         $response = $this->getJson('/api/players');
-    
-        // ✅ Check response status
         $response->assertStatus(200);
-    
-        // ✅ Ensure response contains 3 players
         $response->assertJsonCount(3);
-    
-        // ✅ Verify database contains the created players
         foreach ($players as $player) {
             $this->assertDatabaseHas('players', [
                 'id' => $player->id,
