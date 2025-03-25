@@ -25,4 +25,7 @@ class Tournois extends Model
     public function players(){
         return $this->hasMany(Players::class);
     }
+    public function matches(){
+        return $this->hasMany(Matches::class);
+    }
 }
