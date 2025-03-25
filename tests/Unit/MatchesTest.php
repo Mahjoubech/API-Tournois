@@ -47,5 +47,45 @@ class MatchesTest extends TestCase
             'user_id' => $user->id
         ]);   
     }
+    public function test_Edit_method_Update_a_match()
+    {
+        $user = User::factory()->create();
+        $tournois = Tournois::factory()->create();
+        $this->actingAs($user, 'api');
+        $match = Matches::factory()->create([
+            'user_id' => $user->id,
+            'tournois_id' => $tournois->id
+        ]);
+        $data = [
+            'date_match' => '2025-01-01',
+            'tournois_id' => $tournois->id
+        ];
+        $response = $this->putJson('/api/matches/'.$match->id, $data);
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('matches', [
+            'id' => $match->id,
+            'date_match' => '2025-01-01',
+            'tournois_id' => $tournois->id,
+            'user_id' => $user->id
+        ]);
+    }
+
+    public function test_destroy_method_deletes_a_match()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user, 'api');
+        $tournois = Tournois::factory()->create();
+        $match = Matches::factory()->create([
+            'user_id' => $user->id,
+            'tournois_id' => $tournois->id
+        ]);
+        $response = $this->deleteJson('/api/matches/'.$match->id);
+        $response->assertStatus(200)
+        ->assertJson(['message' => 'The Match was deleted']);
+
+        $this->assertDatabaseMissing('matches', [
+            'id' => $match->id
+        ]);
+    }
 
 }
