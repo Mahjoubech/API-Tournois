@@ -61,7 +61,7 @@ class TournoisController extends Controller
      */
     public function update(Request $request,$id)
     {
-           $tournois = Tournois::find($id);
+            $tournois = Tournois::find($id);
             Gate::authorize('modify', $tournois);
             if (!$tournois) {
                 return response()->json(['message' => 'Tournoi non trouvé'], 404);
@@ -86,6 +86,6 @@ class TournoisController extends Controller
 
         Gate::authorize('modify', $tournois);
         $tournois->delete();
-        return ['message' => 'The Country was deleted'];
+        return ['message' => 'The Tournois was deleted'];
     }
 }
