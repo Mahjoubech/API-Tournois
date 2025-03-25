@@ -56,14 +56,10 @@ class AuthTest extends TestCase
             'email' => 'ch@example.com',
             'password' => Hash::make('12301230'),
         ]);
-
-        // Generate a JWT token
         $token = JWTAuth::fromUser($user);
-
         $response = $this->postJson('/api/logout', [], [
             'Authorization' => "Bearer $token"
         ]);
-
         $response->assertStatus(200)
                  ->assertJson(['message' => 'User logged out successfully']);
     }
