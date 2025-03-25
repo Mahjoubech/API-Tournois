@@ -42,18 +42,6 @@ class MatchesController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(Matches $matches)
-    {
-        if (!$matches) {
-            return response()->json(['message' => 'Match not found'], 404);
-        }
-        return response()->json($matches);
-        
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id)
@@ -64,7 +52,7 @@ class MatchesController extends Controller
         }
         Gate::authorize('modify', $match);
         $data = $request->validate([
-            'match_date' => 'required|date',
+            'date_match' => 'required|date',
             'tournois_id' => 'required|exists:tournois,id',
         ]);
         $match->update($data);
@@ -85,9 +73,11 @@ class MatchesController extends Controller
         $match->delete();
         return response()->json(['message' => 'The Match was deleted']);
     }
-    public function getMatchPlayers($match_id)
+
+
+    public function getMatchPlayers($id)
 {
-    $match = Matches::find($match_id);
+    $match = Matches::find($id);
     if (!$match) {
         return response()->json(['message' => 'Match not found'], 404);
     }
