@@ -27,16 +27,17 @@ class MatchesController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'match_date' => 'required|date',
+            'date_match' => 'required|date',
             'tournois_id' => 'required|exists:tournois,id',
         ]);
         if (!$request->user()) {
             return response()->json(['message' => 'Utilisateur non authentifié'], 401);
         }
         $match = Matches::create([
-            'match_date' => $request->match_date,
+            'date_match' => $request->date_match,
             'tournois_id' => $request->tournois_id,
-        ]);
+            'user_id' => $request->user()->id
+                ]);
         return response()->json($match, 201);
     }
 
