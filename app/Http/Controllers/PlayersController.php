@@ -108,7 +108,9 @@ class PlayersController extends Controller
     if (!$match) {
         return response()->json(['message' => 'Match not found'], 404);
     }
-
+    if ($match->players()->count() >= 2) {
+        return response()->json(['message' => 'Match already has 2 players'], 400);
+    }
     if (!$player->matches()->where('match_player.match_id', $request->match_id)->exists()) {
         $player->matches()->attach($request->match_id);
         return response()->json(['message' => 'Player assigned to match successfully']);
