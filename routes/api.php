@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PlayersController;
 use App\Http\Controllers\MatchesController;
+use App\Http\Controllers\ScoreController;
 use App\Models\Matches;
 
 /*
@@ -19,7 +20,7 @@ use App\Models\Matches;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::post('/register', [AuthController::class, 'register']);
@@ -30,6 +31,7 @@ Route::post('/refresh', [AuthController::class, 'refresh']);
 Route::apiResource('tournois', TournoisController::class);
 Route::apiResource('players', PlayersController::class);
 Route::apiResource('matches', MatchesController::class);
+Route::apiResource('score', ScoreController::class);
 Route::post('/players/{id}/assign-match', [PlayersController::class, 'assignToMatch']);
 Route::post('/players/{player_id}/remove-from-match/{match_id}', [PlayersController::class, 'removeFromMatch']);
 Route::get('/matches/{id}/players', [MatchesController::class, 'getMatchPlayers']);
