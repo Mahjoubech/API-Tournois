@@ -21,7 +21,9 @@ class Matches extends Model
 {
     return $this->belongsToMany(Players::class, 'match_player', 'match_id', 'player_id');
 }
-
+     public function score(){
+    return $this->hasOne(Score::class);
+}
     
 
 }

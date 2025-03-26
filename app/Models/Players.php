@@ -22,5 +22,9 @@ protected $fillable = ['name', 'number','user_id','tournois_id'];
     {
         return $this->belongsToMany(Matches::class, 'match_player', 'player_id', 'match_id');
     }
+    public function score()
+    {
+        return $this->hasOne(Score::class);
+    }
     
 }
