@@ -82,7 +82,12 @@ class MatchesController extends Controller
         return response()->json(['message' => 'Match not found'], 404);
     }
 
-    return response()->json($match->players);
+    return response()->json([
+        "match_id" => $match->id,
+        "Tournois" => $match->tournois->name,
+        "Between" => $match->players[0]->name . " vs " . $match->players[1]->name,
+        "date_match" => $match->date_match,
+    ]);
+    
 }
-
 }
