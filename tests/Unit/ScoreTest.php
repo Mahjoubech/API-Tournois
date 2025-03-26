@@ -112,5 +112,32 @@ class ScoreTest extends TestCase
             'player2_score' => 3,
         ]);
     }
+    public function test_delete_a_score()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user, 'api');
 
+        $tournois = Tournois::factory()->create(['user_id' => $user->id]);
+        $match = Matches::factory()->create(['user_id' => $user->id, 'tournois_id' => $tournois->id]);
+        $playerOne = Players::factory()->create(['user_id' => $user->id, 'tournois_id' => $tournois->id]);
+        $playerTwo = Players::factory()->create(['user_id' => $user->id, 'tournois_id' => $tournois->id]);
+
+        $score = Score::create([
+            'player1_id' => $playerOne->id,
+            'player2_id' => $playerTwo->id,
+            'match_id' => $match->id,
+            'player1_score' => 3,
+            'player2_score' => 2,
+            'user_id' => $user->id,
+        ]);
+
+        Gate::shouldReceive('authorize')->once()->andReturn(true);
+
+        $response = $this->json('DELETE', "/api/score/{$score->id}");
+
+        $response->assertStatus(200)
+                 ->assertJson(['message' => 'The Score was deleted']);
+
+        $this->assertDatabaseMissing('scores', ['id' => $score->id]);
+    }
 }
