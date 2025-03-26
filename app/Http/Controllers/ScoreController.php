@@ -41,7 +41,7 @@ class ScoreController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->validate([
+        $request->validate([
             'player1_id' => 'required|exists:players,id',
             'player2_id' => 'required|exists:players,id',
             'match_id' => 'required|exists:matches,id',
@@ -69,7 +69,20 @@ class ScoreController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $score = Score::find($id);
+        if (!$score) {
+            return response()->json(['message' => 'Score not found'], 404);
+        }
+        Gate::authorize('modify', $score);
+        $data = $request->validate([
+            'player1_id' => 'required|exists:players,id',
+            'player2_id' => 'required|exists:players,id',
+            'match_id' => 'required|exists:matches,id',
+            'player1_score' => 'required|integer',
+            'player2_score' => 'required|integer',
+        ]);
+        $score->update($data);
+        return response()->json($score);
     }
 
     /**
@@ -77,6 +90,12 @@ class ScoreController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        //
+        $score = Score::find($id);
+        if (!$score) {
+            return response()->json(['message' => 'Score not found'], 404);
+        }
+        Gate::authorize('modify', $score);
+        $score->delete();
+        return response()->json(['message' => 'The Score was deleted']);
     }
 }
