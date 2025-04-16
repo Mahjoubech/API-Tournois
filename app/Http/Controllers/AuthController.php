@@ -27,25 +27,20 @@ class AuthController extends Controller
 
     public function login(Request $request){
         $request->validate([
-            'email' => 'required|string|email',
+            'email' => 'required|email|exists:users,email',
             'password' => 'required|string|min:6',
         ]);
-        // Check if the user exists
-        $user = User::where('email', $request->email)->first();
-        if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
+        $credentials = $request->only('email', 'password');
+
+        if (!$token = Auth::attempt($credentials)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
         }
-        // Check if the password is correct
-        if (!password_verify($request->password, $user->password)) {
-            return response()->json(['error' => 'Invalid credentials'], 401);
-        }
-        // Generate a JWT token
-        $token = JWTAuth::fromUser($user);
+
         return response()->json([
-            'message' => 'User logged in successfully',
-            'user' => $user,
-            'token' => $token
-        ], 200);
+            'message' => 'Login successful',
+            'token' => $token,
+            'user' => Auth::user(),
+        ]);
 
         }
 
