@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PlayersController;
 use App\Http\Controllers\MatchesController;
+use App\Http\Controllers\TestController;
 use App\Http\Controllers\ScoreController;
 use App\Models\Matches;
 
@@ -35,4 +36,4 @@ Route::apiResource('score', ScoreController::class);
 Route::post('/players/{id}/assign-match', [PlayersController::class, 'assignToMatch']);
 Route::post('/players/{player_id}/remove-from-match/{match_id}', [PlayersController::class, 'removeFromMatch']);
 Route::get('/matches/{id}/players', [MatchesController::class, 'getMatchPlayers']);
-
+Route::get('/test', [TestController::class, 'test']);

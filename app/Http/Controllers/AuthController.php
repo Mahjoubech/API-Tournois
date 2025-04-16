@@ -16,17 +16,37 @@ class AuthController extends Controller
             'password' => 'required|string|min:6',
         ]);
         $user = User::create($data);
-         return response()->json(['message' => 'User registered successfully' , 'user' => $user], 201);
-    }
+        
+        $token = JWTAuth::fromUser($user);
+
+        return response()->json([
+            'message' => 'User registered successfully',
+            'user' => $user,
+            'token' => $token
+        ], 201);    }
 
     public function login(Request $request){
-        $credentials = $request->only('email', 'password');
-
-        if (!$token = Auth::attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+        $request->validate([
+            'email' => 'required|string|email',
+            'password' => 'required|string|min:6',
+        ]);
+        // Check if the user exists
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
         }
+        // Check if the password is correct
+        if (!password_verify($request->password, $user->password)) {
+            return response()->json(['error' => 'Invalid credentials'], 401);
+        }
+        // Generate a JWT token
+        $token = JWTAuth::fromUser($user);
+        return response()->json([
+            'message' => 'User logged in successfully',
+            'user' => $user,
+            'token' => $token
+        ], 200);
 
-        return $this->respondWithToken($token);
         }
 
     public function logout(Request $request){
@@ -34,6 +54,7 @@ class AuthController extends Controller
         Auth::logout();
         return response()->json(['message' => 'User logged out successfully']);
     }
+
     public function user(Request $request)
 {
     return response()->json(Auth::user(), 200);
