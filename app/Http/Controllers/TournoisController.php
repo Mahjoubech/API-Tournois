@@ -18,7 +18,7 @@ class TournoisController extends Controller
     }
     public function index()
     {
-        return response()->json(    Tournois::with('user')->get());
+        return response()->json(    Tournois::with('user')->latest()->get());
     }
     /**
      * Store a newly created resource in storage.
