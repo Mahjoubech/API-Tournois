@@ -18,7 +18,7 @@ class TournoisController extends Controller
     }
     public function index()
     {
-        return response()->json(    Tournois::all());
+        return response()->json(    Tournois::with('user')->get());
     }
     /**
      * Store a newly created resource in storage.
@@ -38,7 +38,7 @@ class TournoisController extends Controller
 
     $trnois = $request->user()->tournois()->create($trn);
 
-    return response()->json($trnois, 201);
+    return response()->json(['tournois' => $trnois , 'user' =>$request->user()], 201);
 }
 
 
